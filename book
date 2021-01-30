@@ -1,0 +1,49 @@
+#Installing and loading the libraries
+#install.packages("recommenderlab", dependencies=TRUE)
+#install.packages("Matrix")
+library("recommenderlab")
+library(caTools)
+
+#movie rating data
+book_rate_data <- read.csv(file.choose())#metadata about the variable
+str(book_rate_data)
+View(book_rate_data)
+dim(book_rate_data)
+
+#deleting first column
+data = book_rate_data[,-1]
+View(data)
+
+#to change the column names
+colnames(data)[1] = "User"
+colnames(data)[2] = "Title"
+colnames(data)[3] = "Author"
+colnames(data)[4] = "Publisher"
+colnames(data)[5] = "Rating"
+View(data)
+
+
+#the datatype should be realRatingMatrix inorder to build recommendation engine
+data_matrix <- as(data, 'realRatingMatrix')
+
+#Popularity based 
+
+book_recomm_model1 <- Recommender(data_matrix, method="POPULAR")
+
+#Predictions
+recommended_items1 <- predict(book_recomm_model1, data_matrix[1], n=4)
+as(recommended_items1, "list")
+## Popularity model recommends the same books for all users , 
+#we need to improve our model using # # Collaborative Filtering
+
+#User Based Collaborative Filtering
+
+book_recomm_model2 <- Recommender(data_matrix, method="UBCF")
+?Recommender
+#install.packages("IBCF.MTME")
+#library(IBCF.MTME)
+
+#Predictions 
+recommended_items2 <- predict(book_recomm_model2, data_matrix[1], n=4)
+as(recommended_items2, "list")
+
